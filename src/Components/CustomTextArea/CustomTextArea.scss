@@ -1,0 +1,25 @@
+.textArea-ctr {
+	transition: 0.2s ease-in-out;
+
+	.ql-toolbar {}
+
+	.ql-snow {
+		max-height: 38rem;
+		border: 0px solid transparent !important;
+
+		button {
+			background-color: transparent;
+
+		}
+
+		.ql-editor {
+			overflow-y: scroll;
+		}
+	}
+
+	.ql-container {}
+
+	.ql-editor {
+		overflow-y: scroll;
+	}
+}

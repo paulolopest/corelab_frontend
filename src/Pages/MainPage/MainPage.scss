@@ -1,0 +1,63 @@
+.main-pg-ctr {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 3.5rem);
+    width: 100%;
+    background-color: #f1f1f1;
+
+    .add-note-ctr {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 12rem;
+
+        .add-note {
+            display: flex;
+            flex-direction: column;
+            width: 35rem;
+            height: 8rem;
+            box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            border: 1px solid #e1e1e1;
+            cursor: pointer;
+            background-color: white;
+
+
+
+            .add-nt-title {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: 30%;
+                width: 100%;
+                border-bottom: 1px solid #e1e1e1;
+
+                input {
+                    border: none;
+                    outline: none;
+                    font-size: 1rem;
+                    padding-left: 1.5rem;
+                }
+
+                svg {
+                    height: 1.3rem;
+                    width: 1.3rem;
+                    margin-right: 1.5rem;
+                    fill: #b1b1b1;
+                    cursor: pointer;
+                }
+            }
+
+            .add-nt-bd {
+                height: 70%;
+                width: 100%;
+
+                p {
+                    padding: 1rem 1rem;
+                    color: #b1b1b1;
+                }
+            }
+        }
+    }
+}

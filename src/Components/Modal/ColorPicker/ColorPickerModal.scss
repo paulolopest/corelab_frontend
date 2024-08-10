@@ -1,0 +1,23 @@
+.note-colors {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 1rem;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+    background-color: white;
+    width: 18.5rem;
+    height: 6rem;
+    border: 1px solid #e1e1e1;
+    border-radius: 10px;
+    z-index: 30;
+
+    span {
+        border-radius: 50px;
+        width: 2rem;
+        height: 2rem;
+        cursor: pointer;
+        border: 1px solid #4d4d4d;
+    }
+}
