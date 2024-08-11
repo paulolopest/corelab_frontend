@@ -5,32 +5,30 @@ import useMedia from '../Hooks/useMedia'
 export const GlobalContext = React.createContext('')
 
 export const GlobalStorage = ({ children }) => {
-  const [addNoteModal, setAddNoteModal] = useState(true)
-  const [colorPicker, setColorPicker] = useState(false)
+    const [addNoteModal, setAddNoteModal] = useState(true)
+    const [colorPicker, setColorPicker] = useState(false)
 
-  const mediumScreen = useMedia('(max-width: 1050px)')
-  const smallScreen = useMedia('(max-width: 800px)')
-  const mobileScreen = useMedia('(max-width: 600px)')
+    const mediumScreen = useMedia('(max-width: 1050px)')
+    const smallScreen = useMedia('(max-width: 800px)')
+    const mobileScreen = useMedia('(max-width: 600px)')
 
-  console.log(colorPicker)
-
-  return (
-    <GlobalContext.Provider
-      value={{
-        addNoteModal,
-        setAddNoteModal,
-        colorPicker,
-        setColorPicker,
-        mediumScreen,
-        smallScreen,
-        mobileScreen,
-      }}
-    >
-      {children}
-    </GlobalContext.Provider>
-  )
+    return (
+        <GlobalContext.Provider
+            value={{
+                addNoteModal,
+                setAddNoteModal,
+                colorPicker,
+                setColorPicker,
+                mediumScreen,
+                smallScreen,
+                mobileScreen,
+            }}
+        >
+            {children}
+        </GlobalContext.Provider>
+    )
 }
 
 GlobalStorage.propTypes = {
-  children: PropTypes.node.isRequired,
+    children: PropTypes.node.isRequired,
 }

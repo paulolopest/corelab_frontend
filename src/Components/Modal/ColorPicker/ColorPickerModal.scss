@@ -10,6 +10,7 @@
     width: 18.5rem;
     height: 6rem;
     border: 1px solid #e1e1e1;
+    box-shadow: 0px 2px 5px 0px rgba(100, 100, 100, 0.3);
     border-radius: 10px;
     z-index: 30;
 
@@ -19,5 +20,7 @@
         height: 2rem;
         cursor: pointer;
         border: 1px solid #4d4d4d;
+
+
     }
 }

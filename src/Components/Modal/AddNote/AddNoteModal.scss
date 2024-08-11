@@ -6,7 +6,7 @@
     z-index: 20;
     width: 100vw;
     height: 100vh;
-    background-color:rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(1px);
     left: 0;
     top: 0;
@@ -20,8 +20,6 @@
         box-shadow: 0px 2px 5px 0px rgba(100, 100, 100, 0.3);
         position: relative;
         z-index: 30;
-        transition: .2s ease-in-out;
-
 
         .add-nt-title {
             display: flex;
@@ -30,9 +28,10 @@
             height: 10%;
             width: 100%;
             border-bottom: 1px solid #f1f1f1;
-            transition: .2s ease-in-out;
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
+            transition: .3s ease-in-out;
+
 
             input {
                 border: none;
@@ -44,8 +43,8 @@
                 font-size: 1.5rem;
                 border-top-left-radius: 10px;
                 border-top-right-radius: 10px;
-                transition: .2s ease-in-out;
-                
+                transition: .3s ease-in-out;
+
             }
 
             svg {
@@ -53,12 +52,12 @@
                 width: 2rem;
                 margin-right: 1.5rem;
                 cursor: pointer;
-                transition: .2 ease-in-out;
+                transition: .3s ease-in-out;
 
                 &:hover {
                     path {
-                        fill: orange;
-                        stroke: orange;
+                        fill: #fffb00;
+                        stroke: #fffb00;
                     }
                 }
             }
@@ -83,14 +82,15 @@
         .ext-cfg-note {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            width: 12rem;
+            gap: 0 3rem;
+            width: 27rem;
             height: 3rem;
             position: absolute;
             bottom: 1rem;
             left: 1rem;
 
-            .tag-note-btn, .color-note-btn {
+            .tag-note-btn,
+            .color-note-btn {
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -100,6 +100,23 @@
                 position: relative;
                 user-select: none;
             }
+
+            .tag-map {
+                display: flex;
+                gap: 0 .5rem;
+                font-size: .8rem;
+
+                p {
+                    padding: .5rem;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    color: white;
+                    font-weight: 500;
+                    background-color: #1c1c1c;
+                }
+            }
         }
+
+
     }
 }

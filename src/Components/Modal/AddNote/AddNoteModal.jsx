@@ -1,67 +1,139 @@
 import './AddNoteModal.scss'
-import { motion } from 'framer-motion'
+import TagModal from './../Tags/TagModal'
 import { Star } from '@phosphor-icons/react'
-import React, { useContext, useState } from 'react'
+import useUtils from '../../../Hooks/useUtils'
+import React, { useContext, useEffect, useState } from 'react'
 import ColorPickerModal from '../ColorPicker/ColorPickerModal'
 import { GlobalContext } from '../../../Contexts/GlobalContext'
+import { AnimatePresence, motion, useAnimate } from 'framer-motion'
 import { CustomTextArea } from '../../CustomTextArea/CustomTextArea'
 
 const AddNoteModal = () => {
-  const [cpModal, setCpModal] = useState(false)
-  const [isFavorite, setIsFavorite] = useState(false)
-  const [noteColor, setNoteColor] = useState('#ffff')
-  const { addNoteModal, setAddNoteModal } = useContext(GlobalContext)
+    const [scope, animate] = useAnimate()
+    const [isMounted, setIsMounted] = useState(false)
+    const [isFavorite, setIsFavorite] = useState(false)
+    const [tagModal, setTagModal] = useState({ isVisible: false, tags: [] })
+    const [noteColor, setNoteColor] = useState({ isVisible: false, color: '#ffff' })
 
-  return (
-    <div className="ant-mdl-bk-screen">
-      <div className="add-note-ctr" style={{ backgroundColor: noteColor }}>
-        <div className="add-nt-title" style={{ backgroundColor: noteColor }}>
-          <input placeholder="Título" style={{ backgroundColor: noteColor }} />
-          <Star
-            onClick={() => setIsFavorite(!isFavorite)}
-            color={isFavorite ? 'orange' : 'gray'}
-            weight={isFavorite ? 'fill' : 'light'}
-          />
-        </div>
+    const { CloseModal } = useUtils()
+    const { addNoteModal, setAddNoteModal } = useContext(GlobalContext)
 
-        <CustomTextArea />
+    const removeTag = (item) => {
+        const newArr = tagModal.tags.filter((tag) => tag !== item)
+        setTagModal({ isVisible: tagModal.isVisible, tags: newArr })
+    }
 
-        <motion.button
-          className="add-note-btn"
-          whileHover={{
-            scale: 1.05,
-            backgroundColor: 'ButtonHighlight',
-          }}
-          whileTap={{ scale: 0.9 }}
+    const openModal = (modal) => {
+        if (modal === 'color') {
+            setTagModal({ isVisible: false, tags: tagModal.tags })
+            setNoteColor({ isVisible: !noteColor.isVisible, color: noteColor.color })
+        } else {
+            setTagModal({ isVisible: !tagModal.isVisible, tags: tagModal.tags })
+            setNoteColor({ isVisible: false, color: noteColor.color })
+        }
+    }
+
+    const tagMap = tagModal.tags.map((item, index) => (
+        <motion.p
+            key={index}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
+            onClick={() => removeTag(item)}
         >
-          Adicionar
-        </motion.button>
+            {item}
+        </motion.p>
+    ))
 
-        <div className="ext-cfg-note">
-          <motion.div className="color-note-btn">Tags</motion.div>
-          <motion.div
-            className="tag-note-btn"
-            style={{
-              backgroundColor: noteColor === '#ffff' ? '#f1f1f1' : 'white',
-            }}
-            onClick={() => setCpModal(!cpModal)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            Color
-          </motion.div>
+    const handleAnimate = async () => {
+        await animate('#cardModal', { opacity: 1, scale: 1 })
+        await animate('#btn', { opacity: 1, y: 0 }, { duration: 0.2, ease: 'easeInOut' })
+        setIsMounted(true)
+    }
 
-          {cpModal && (
-            <ColorPickerModal
-              top="-6.3rem"
-              left="7.4rem"
-              selectState={setNoteColor}
-            />
-          )}
+    useEffect(() => {
+        handleAnimate()
+    }, [])
+
+    return (
+        <div
+            className="ant-mdl-bk-screen"
+            ref={scope}
+            onClick={(e) => CloseModal(e, addNoteModal, setAddNoteModal)}
+        >
+            <motion.div
+                className="add-note-ctr"
+                id="cardModal"
+                initial={{ opacity: 0, scale: 0 }}
+                style={{ backgroundColor: noteColor.color, transition: `${isMounted && '0.3s ease-in-out'}` }}
+            >
+                <div className="add-nt-title" style={{ backgroundColor: noteColor.color }}>
+                    <input placeholder="Título" style={{ backgroundColor: noteColor.color }} />
+                    <Star
+                        stroke={isFavorite && 'black'}
+                        color={isFavorite ? '#fffb00' : 'gray'}
+                        weight={isFavorite ? 'fill' : 'light'}
+                        onClick={() => setIsFavorite(!isFavorite)}
+                    />
+                </div>
+
+                <CustomTextArea />
+
+                <motion.button
+                    className="add-note-btn"
+                    id="btn"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileTap={{ scale: 0.8 }}
+                    whileHover={{ scale: 1.05, backgroundColor: 'ButtonHighlight' }}
+                >
+                    Adicionar
+                </motion.button>
+
+                <div className="ext-cfg-note">
+                    <motion.div
+                        className="color-note-btn"
+                        id="btn"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileTap={{ scale: 0.8 }}
+                        whileHover={{ scale: 1.05 }}
+                        style={{ backgroundColor: noteColor.color === '#ffff' ? '#f1f1f1' : 'white' }}
+                        onClick={() => openModal('tag')}
+                    >
+                        Tags
+                    </motion.div>
+
+                    <motion.div
+                        className="tag-note-btn"
+                        id="btn"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileTap={{ scale: 0.9 }}
+                        whileHover={{ scale: 1.05 }}
+                        style={{ backgroundColor: noteColor.color === '#ffff' ? '#f1f1f1' : 'white' }}
+                        onClick={() => openModal('color')}
+                    >
+                        Color
+                    </motion.div>
+
+                    {tagModal.tags.length > 0 && <div className="tag-map">{tagMap}</div>}
+
+                    <AnimatePresence mode="wait">
+                        {noteColor.isVisible && (
+                            <ColorPickerModal
+                                top="-6.3rem"
+                                left="7.4rem"
+                                currentState={noteColor}
+                                selectState={setNoteColor}
+                            />
+                        )}
+
+                        {tagModal.isVisible && (
+                            <TagModal top="-12.3rem" selectState={setTagModal} currentState={tagModal} />
+                        )}
+                    </AnimatePresence>
+                </div>
+            </motion.div>
         </div>
-      </div>
-    </div>
-  )
+    )
 }
 
 export default AddNoteModal
