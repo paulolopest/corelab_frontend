@@ -5,12 +5,14 @@ import useMedia from '../Hooks/useMedia'
 export const GlobalContext = React.createContext('')
 
 export const GlobalStorage = ({ children }) => {
-    const [addNoteModal, setAddNoteModal] = useState(true)
+    const [addNoteModal, setAddNoteModal] = useState(false)
     const [colorPicker, setColorPicker] = useState(false)
 
     const mediumScreen = useMedia('(max-width: 1050px)')
     const smallScreen = useMedia('(max-width: 800px)')
     const mobileScreen = useMedia('(max-width: 600px)')
+
+    console.log(addNoteModal)
 
     return (
         <GlobalContext.Provider

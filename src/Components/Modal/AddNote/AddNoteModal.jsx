@@ -1,6 +1,6 @@
 import './AddNoteModal.scss'
 import TagModal from './../Tags/TagModal'
-import { Star } from '@phosphor-icons/react'
+import { Star, X } from '@phosphor-icons/react'
 import useUtils from '../../../Hooks/useUtils'
 import React, { useContext, useEffect, useState } from 'react'
 import ColorPickerModal from '../ColorPicker/ColorPickerModal'
@@ -47,7 +47,9 @@ const AddNoteModal = () => {
 
     const handleAnimate = async () => {
         await animate('#cardModal', { opacity: 1, scale: 1 })
-        await animate('#btn', { opacity: 1, y: 0 }, { duration: 0.2, ease: 'easeInOut' })
+        animate('#btn', { opacity: 1, y: 0 }, { duration: 0.2, ease: 'easeInOut' })
+        animate('#star', { opacity: 1, scale: 1 }, { duration: 0.2, ease: 'easeInOut' })
+        animate('#cls-btn', { opacity: 1, scale: 1 }, { duration: 0.2, ease: 'easeInOut' })
         setIsMounted(true)
     }
 
@@ -65,16 +67,21 @@ const AddNoteModal = () => {
                 className="add-note-ctr"
                 id="cardModal"
                 initial={{ opacity: 0, scale: 0 }}
-                style={{ backgroundColor: noteColor.color, transition: `${isMounted && '0.3s ease-in-out'}` }}
+                style={{
+                    backgroundColor: noteColor.color,
+                    transition: `${isMounted && '0.3s ease-in-out'}`,
+                }}
             >
                 <div className="add-nt-title" style={{ backgroundColor: noteColor.color }}>
                     <input placeholder="Título" style={{ backgroundColor: noteColor.color }} />
-                    <Star
-                        stroke={isFavorite && 'black'}
-                        color={isFavorite ? '#fffb00' : 'gray'}
-                        weight={isFavorite ? 'fill' : 'light'}
-                        onClick={() => setIsFavorite(!isFavorite)}
-                    />
+                    <motion.div id="star" initial={{ opacity: 0, scale: 0 }}>
+                        <Star
+                            stroke={isFavorite && 'black'}
+                            color={isFavorite ? '#fffb00' : 'gray'}
+                            weight={isFavorite ? 'fill' : 'light'}
+                            onClick={() => setIsFavorite(!isFavorite)}
+                        />
+                    </motion.div>
                 </div>
 
                 <CustomTextArea />
@@ -131,6 +138,15 @@ const AddNoteModal = () => {
                         )}
                     </AnimatePresence>
                 </div>
+
+                <motion.div
+                    id="cls-btn"
+                    initial={{ opacity: 0, scale: 0 }}
+                    className="cls-mdl"
+                    onClick={() => setAddNoteModal(false)}
+                >
+                    <X />
+                </motion.div>
             </motion.div>
         </div>
     )

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
-import { GlobalContext } from '../../Contexts/GlobalContext'
-import AddNoteModal from './AddNote/AddNoteModal'
 import useUtils from '../../Hooks/useUtils'
+import AddNoteModal from './AddNote/AddNoteModal'
+import { GlobalContext } from '../../Contexts/GlobalContext'
 
 const ModalIndex = () => {
     const { addNoteModal, setAddNoteModal } = useContext(GlobalContext)
