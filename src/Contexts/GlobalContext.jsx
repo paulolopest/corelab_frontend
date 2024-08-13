@@ -12,8 +12,6 @@ export const GlobalStorage = ({ children }) => {
     const smallScreen = useMedia('(max-width: 800px)')
     const mobileScreen = useMedia('(max-width: 600px)')
 
-    console.log(addNoteModal)
-
     return (
         <GlobalContext.Provider
             value={{

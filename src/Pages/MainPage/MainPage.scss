@@ -82,6 +82,11 @@
             cursor: grab;
         }
 
+        .nn-lst {
+            color: #a5a5a5;
+            padding: 1rem 0;
+        }
+
     }
 
     .other-ctr {
@@ -100,6 +105,11 @@
             display: flex;
             gap: 2.5rem 1.5rem;
             flex-wrap: wrap;
+
+            .nn-lst {
+                color: #a5a5a5;
+                padding: 1rem 0;
+            }
         }
     }
 }

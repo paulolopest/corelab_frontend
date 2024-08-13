@@ -1,34 +1,81 @@
-import { PaintBucket, PencilSimpleLine, Star, X } from '@phosphor-icons/react'
 import './NoteCard.scss'
-import React from 'react'
-import { motion } from 'framer-motion'
+import React, { useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { PaintBucket, PencilSimpleLine, Star, Warning, X } from '@phosphor-icons/react'
 
-const NoteCard = () => {
+const NoteCard = ({ task, favoriteNote, deleteNote }) => {
+    const [showDelete, setShowDelete] = useState(false)
+
     return (
-        <motion.div className="nt-crd-ctr">
+        <motion.div
+            initial={{ opacity: 0, scale: 0 }}
+            exit={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.15 }}
+            style={{ backgroundColor: task.color }}
+            className="nt-crd-ctr"
+        >
             <div className="nt-crd-title">
-                <p>Titulo</p>
-                <Star />
+                <p>{task.name}</p>
+                <Star
+                    stroke={task.favorite ? 'gray' : '#ffd752'}
+                    color={task.favorite ? '#ffd752' : 'gray'}
+                    weight={task.favorite ? 'fill' : 'light'}
+                    onClick={() => favoriteNote(task.id, task.favorite)}
+                />
             </div>
-            <div className="nt-crd-body">
-                <p>
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-                    sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                    est laborum.""Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                </p>
-            </div>
+            <div className="nt-crd-body" dangerouslySetInnerHTML={{ __html: task.description }} />
+
             <div className="nt-crd-ftr">
-                <div>
-                    <PencilSimpleLine />
-                    <PaintBucket />
+                <div className="nt-crd-ftr-fst">
+                    <div>
+                        <PencilSimpleLine />
+                    </div>
+                    <div>
+                        <PaintBucket />
+                    </div>
                 </div>
 
-                <X />
+                <div className="nt-crd-ftr-scd" onClick={() => setShowDelete(true)}>
+                    <X />
+                </div>
             </div>
+
+            <AnimatePresence>
+                {showDelete && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0 }}
+                        exit={{ opacity: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="dlt-mdl-ctr"
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0 }}
+                            exit={{ opacity: 0, scale: 0 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="dlt-mdl"
+                        >
+                            <div className="dlt-mdl-icn">
+                                <Warning />
+                            </div>
+                            <h1>Deletar Nota</h1>
+                            <p>
+                                Você está prestes a <span>deletar</span> uma nota. Esta ação é irreversível.
+                                Deseja continuar?
+                            </p>
+
+                            <div>
+                                <button className="dlt-mdl-btn1" onClick={() => setShowDelete(false)}>
+                                    Não, manter.
+                                </button>
+                                <button className="dlt-mdl-btn2" onClick={() => deleteNote(task.id)}>
+                                    Sim, deletar!
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.div>
     )
 }

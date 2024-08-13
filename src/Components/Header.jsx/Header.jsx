@@ -1,14 +1,18 @@
 import './Header.scss'
-import React, { useState } from 'react'
 import NotePad from './../../Assets/NotePad'
-import { Funnel, MagnifyingGlass, User } from '@phosphor-icons/react'
-import FilterModal from '../Modal/Filter/FilterModal'
 import { AnimatePresence } from 'framer-motion'
+import React, { useContext, useState } from 'react'
+import FilterModal from '../Modal/Filter/FilterModal'
+import { UserContext } from '../../Contexts/UserContext'
+import { Funnel, MagnifyingGlass, User } from '@phosphor-icons/react'
 
 const Header = () => {
     const [tag, setTag] = useState('')
     const [filterModal, setFilterModal] = useState(false)
     const [order, setOrder] = React.useState('Mais recentes')
+
+    const { data } = useContext(UserContext)
+
     return (
         <div className="hdr-ctr">
             <div className="hdr-nav-ctr">
@@ -39,7 +43,7 @@ const Header = () => {
 
             <div className="pfl-ctr">
                 <User />
-                <p>Paulo</p>
+                {data && data.username}
             </div>
         </div>
     )

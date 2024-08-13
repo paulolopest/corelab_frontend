@@ -2,21 +2,27 @@ import './AddNoteModal.scss'
 import TagModal from './../Tags/TagModal'
 import { Star, X } from '@phosphor-icons/react'
 import useUtils from '../../../Hooks/useUtils'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import ColorPickerModal from '../ColorPicker/ColorPickerModal'
 import { GlobalContext } from '../../../Contexts/GlobalContext'
 import { AnimatePresence, motion, useAnimate } from 'framer-motion'
 import { CustomTextArea } from '../../CustomTextArea/CustomTextArea'
+import useAxios from './../../../Hooks/useAxios'
+import { TaskRequest } from './../../../Requests/TaskRequest'
 
 const AddNoteModal = () => {
     const [scope, animate] = useAnimate()
+    const [title, setTitle] = useState('')
     const [isMounted, setIsMounted] = useState(false)
+    const [description, setDescription] = useState('')
     const [isFavorite, setIsFavorite] = useState(false)
     const [tagModal, setTagModal] = useState({ isVisible: false, tags: [] })
     const [noteColor, setNoteColor] = useState({ isVisible: false, color: '#ffff' })
 
+    const taskRequest = new TaskRequest()
     const { CloseModal } = useUtils()
     const { addNoteModal, setAddNoteModal } = useContext(GlobalContext)
+    const { post } = useAxios()
 
     const removeTag = (item) => {
         const newArr = tagModal.tags.filter((tag) => tag !== item)
@@ -31,6 +37,22 @@ const AddNoteModal = () => {
             setTagModal({ isVisible: !tagModal.isVisible, tags: tagModal.tags })
             setNoteColor({ isVisible: false, color: noteColor.color })
         }
+    }
+
+    console.log(title)
+
+    const addNote = () => {
+        const { url, options } = taskRequest.CREATE_TASK()
+
+        const body = {
+            name: title,
+            description,
+            favorite: isFavorite,
+            color: noteColor.color,
+            tags: tagModal.tags,
+        }
+
+        post(url, body, options)
     }
 
     const tagMap = tagModal.tags.map((item, index) => (
@@ -73,7 +95,11 @@ const AddNoteModal = () => {
                 }}
             >
                 <div className="add-nt-title" style={{ backgroundColor: noteColor.color }}>
-                    <input placeholder="Título" style={{ backgroundColor: noteColor.color }} />
+                    <input
+                        placeholder="Título"
+                        onChange={(e) => setTitle(e.target.value)}
+                        style={{ backgroundColor: noteColor.color }}
+                    />
                     <motion.div id="star" initial={{ opacity: 0, scale: 0 }}>
                         <Star
                             stroke={isFavorite && 'black'}
@@ -84,13 +110,14 @@ const AddNoteModal = () => {
                     </motion.div>
                 </div>
 
-                <CustomTextArea />
+                <CustomTextArea value={description} setValue={setDescription} />
 
                 <motion.button
                     className="add-note-btn"
                     id="btn"
                     initial={{ opacity: 0, y: 30 }}
                     whileTap={{ scale: 0.8 }}
+                    onClick={addNote}
                     whileHover={{ scale: 1.05, backgroundColor: 'ButtonHighlight' }}
                 >
                     Adicionar
