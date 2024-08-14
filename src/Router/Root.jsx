@@ -4,13 +4,13 @@ import Header from './../Components/Header.jsx/Header'
 import ModalIndex from '../Components/Modal/ModalIndex'
 
 const Root = () => {
-  return (
-    <IndexStorage>
-      <ModalIndex />
-      <Header />
-      <Outlet />
-    </IndexStorage>
-  )
+    return (
+        <IndexStorage>
+            <ModalIndex />
+            <Header />
+            <Outlet />
+        </IndexStorage>
+    )
 }
 
 export default Root

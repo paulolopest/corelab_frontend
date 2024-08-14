@@ -1,64 +1,26 @@
 import './MainPage.scss'
-import { AnimatePresence, motion } from 'framer-motion'
 import { Star } from '@phosphor-icons/react'
-import useAxios from './../../Hooks/useAxios'
-import { TaskRequest } from './../../Requests/TaskRequest'
+import { AnimatePresence, motion } from 'framer-motion'
+import { TaskContext } from '../../Contexts/TaskContext'
 import NoteCard from '../../Components/NoteCard.jsx/NoteCard'
-import { GlobalContext } from './../../Contexts/GlobalContext'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { GlobalContext } from '../../Contexts/GlobalContext'
+import React, { useContext, useEffect, useState } from 'react'
 
 const MainPage = () => {
-    const [pageLimit, setPageLimit] = useState(30)
-    const [pageOrder, setPageOrder] = useState('asc')
+    const [pageOrder, setPageOrder] = useState('desc')
     const [orderBy, setOrderBy] = useState('created_at')
+
     const { setAddNoteModal } = useContext(GlobalContext)
-
-    const taskRequests = new TaskRequest()
-
-    const userReq = useAxios()
-    const taskReq = useAxios()
-
-    const fetchTasks = useCallback(() => {
-        const { url, options } = taskRequests.GET_ALL_TASKS(pageLimit, pageOrder, orderBy)
-        userReq.get(url, options)
-    }, [pageLimit, pageOrder, orderBy, taskRequests, userReq])
-
-    const favoriteNote = useCallback(
-        (id, favorite) => {
-            const { url, options } = taskRequests.EDIT_TASK(id)
-            taskReq.put(url, { favorite: !favorite }, options).then(() => {
-                fetchTasks()
-            })
-        },
-        [taskRequests, taskReq, fetchTasks],
-    )
-
-    const deleteNote = useCallback(
-        (id) => {
-            const { url, options } = taskRequests.DELETE_TASK(id)
-            taskReq.deleteReq(url, options).then(() => {
-                fetchTasks()
-            })
-        },
-        [taskRequests, taskReq, fetchTasks],
-    )
+    const { data, fetchTasks } = useContext(TaskContext)
 
     useEffect(() => {
         fetchTasks()
     }, [])
 
     const taskMap =
-        userReq.data &&
-        userReq.data.response.map((task) => (
-            <NoteCard key={task.id} task={task} favoriteNote={favoriteNote} deleteNote={deleteNote} />
-        ))
-
-    const favFilter = userReq.data && userReq.data.response.filter((task) => task.favorite === true)
+        data && data.filter((task) => !task.favorite).map((task) => <NoteCard key={task.id} task={task} />)
     const favMap =
-        favFilter &&
-        favFilter.map((task) => (
-            <NoteCard key={task.id} task={task} favoriteNote={favoriteNote} deleteNote={deleteNote} />
-        ))
+        data && data.filter((task) => task.favorite).map((task) => <NoteCard key={task.id} task={task} />)
 
     return (
         <div className="main-pg-ctr">
@@ -82,7 +44,7 @@ const MainPage = () => {
                         <motion.div
                             drag="x"
                             dragElastic={0.2}
-                            dragConstraints={{ left: -200 * 8, right: 0 }}
+                            dragConstraints={{ left: -200 * 1, right: 0 }}
                             className="fav-carousel-ctr"
                         >
                             <AnimatePresence>{favMap}</AnimatePresence>
@@ -91,10 +53,13 @@ const MainPage = () => {
                         <span className="nn-lst">Nenhuma nota favorita...</span>
                     )}
                 </section>
+
                 <section className="other-ctr">
                     <h2>Outras</h2>
 
-                    <div className="otr-list-ctr">{taskMap}</div>
+                    <div className="otr-list-ctr">
+                        <AnimatePresence>{taskMap}</AnimatePresence>
+                    </div>
                 </section>
             </div>
         </div>

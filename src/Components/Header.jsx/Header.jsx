@@ -1,49 +1,69 @@
 import './Header.scss'
 import NotePad from './../../Assets/NotePad'
-import { AnimatePresence } from 'framer-motion'
-import React, { useContext, useState } from 'react'
 import FilterModal from '../Modal/Filter/FilterModal'
-import { UserContext } from '../../Contexts/UserContext'
-import { Funnel, MagnifyingGlass, User } from '@phosphor-icons/react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { TaskContext } from '../../Contexts/TaskContext'
+import { GlobalContext } from '../../Contexts/GlobalContext'
+import React, { useContext, useEffect, useState } from 'react'
+import { Funnel, MagnifyingGlass } from '@phosphor-icons/react'
 
 const Header = () => {
-    const [tag, setTag] = useState('')
+    const [searchWord, setSearchWord] = useState('')
     const [filterModal, setFilterModal] = useState(false)
-    const [order, setOrder] = React.useState('Mais recentes')
 
-    const { data } = useContext(UserContext)
+    const { smallScreen } = useContext(GlobalContext)
+    const { searchTask, fetchTasks } = useContext(TaskContext)
+
+    useEffect(() => {
+        const handleSearch = () => {
+            if (searchWord) {
+                searchTask(searchWord)
+            } else {
+                fetchTasks(30, 'desc', 'created_at')
+            }
+        }
+
+        const debounceTimeout = setTimeout(handleSearch, 500)
+
+        return () => clearTimeout(debounceTimeout)
+    }, [searchWord, searchTask, fetchTasks])
 
     return (
         <div className="hdr-ctr">
             <div className="hdr-nav-ctr">
                 <div className="hdr-logo">
                     <NotePad />
-                    <p>CoreNotes</p>
+                    {!smallScreen && <p>CoreNotes</p>}
                 </div>
 
-                <div className="src-ctr">
-                    <input placeholder="Pesquisar notas" />
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="src-ctr"
+                >
+                    <motion.input
+                        value={searchWord}
+                        onChange={({ target }) => setSearchWord(target.value)}
+                        placeholder="Pesquisar notas"
+                    />
                     <div />
-                    <MagnifyingGlass color="#9e9e9e" />
-                </div>
+                    <MagnifyingGlass onClick={() => searchTask(searchWord)} color="#9e9e9e" />
+                </motion.div>
 
-                <div className="filter-ctr">
+                <motion.div
+                    className="filter-ctr"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                >
                     <div className="filter-ctr-ctct" onClick={() => setFilterModal(!filterModal)}>
                         <Funnel />
                         <p>Filtrar</p>
                     </div>
 
                     <AnimatePresence>
-                        {filterModal && (
-                            <FilterModal order={order} setOrder={setOrder} tag={tag} setTag={setTag} />
-                        )}
+                        {filterModal && <FilterModal searchWord={searchWord} />}
                     </AnimatePresence>
-                </div>
-            </div>
-
-            <div className="pfl-ctr">
-                <User />
-                {data && data.username}
+                </motion.div>
             </div>
         </div>
     )

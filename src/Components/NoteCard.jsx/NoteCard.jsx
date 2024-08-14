@@ -1,10 +1,20 @@
 import './NoteCard.scss'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { PaintBucket, PencilSimpleLine, Star, Warning, X } from '@phosphor-icons/react'
+import { TaskContext } from '../../Contexts/TaskContext'
+import { GlobalContext } from '../../Contexts/GlobalContext'
 
-const NoteCard = ({ task, favoriteNote, deleteNote }) => {
+const NoteCard = ({ task }) => {
     const [showDelete, setShowDelete] = useState(false)
+
+    const { setUpdateNoteModal } = useContext(GlobalContext)
+    const { deleteTask, favoriteTask } = useContext(TaskContext)
+
+    const handleDelete = async (id) => {
+        await deleteTask(id)
+        setShowDelete(false)
+    }
 
     return (
         <motion.div
@@ -21,14 +31,14 @@ const NoteCard = ({ task, favoriteNote, deleteNote }) => {
                     stroke={task.favorite ? 'gray' : '#ffd752'}
                     color={task.favorite ? '#ffd752' : 'gray'}
                     weight={task.favorite ? 'fill' : 'light'}
-                    onClick={() => favoriteNote(task.id, task.favorite)}
+                    onClick={() => favoriteTask(task.id, task.favorite)}
                 />
             </div>
             <div className="nt-crd-body" dangerouslySetInnerHTML={{ __html: task.description }} />
 
             <div className="nt-crd-ftr">
                 <div className="nt-crd-ftr-fst">
-                    <div>
+                    <div onClick={() => setUpdateNoteModal({ isVisible: true, task })}>
                         <PencilSimpleLine />
                     </div>
                     <div>
@@ -68,7 +78,7 @@ const NoteCard = ({ task, favoriteNote, deleteNote }) => {
                                 <button className="dlt-mdl-btn1" onClick={() => setShowDelete(false)}>
                                     Não, manter.
                                 </button>
-                                <button className="dlt-mdl-btn2" onClick={() => deleteNote(task.id)}>
+                                <button className="dlt-mdl-btn2" onClick={() => handleDelete(task.id)}>
                                     Sim, deletar!
                                 </button>
                             </div>

@@ -1,24 +1,29 @@
-import './AddNoteModal.scss'
-import TagModal from './../Tags/TagModal'
+import './UpdateNoteModal.scss'
+import TagModal from '../Tags/TagModal'
 import { Star, X } from '@phosphor-icons/react'
-import React, { useContext, useEffect, useState } from 'react'
 import ColorPickerModal from '../ColorPicker/ColorPickerModal'
-import { AnimatePresence, motion, useAnimate } from 'framer-motion'
+import React, { useContext, useEffect, useState } from 'react'
+import { AnimatePresence, motion, useAnimate, useMotionValueEvent, useScroll } from 'framer-motion'
 import { CustomTextArea } from '../../CustomTextArea/CustomTextArea'
 import { TaskContext } from '../../../Contexts/TaskContext'
 import { GlobalContext } from '../../../Contexts/GlobalContext'
 
-const AddNoteModal = () => {
+const UpdateNoteModal = ({ task }) => {
     const [scope, animate] = useAnimate()
-    const [title, setTitle] = useState('')
+    const [title, setTitle] = useState(task.title)
     const [isMounted, setIsMounted] = useState(false)
-    const [description, setDescription] = useState('')
-    const [isFavorite, setIsFavorite] = useState(false)
-    const [tagModal, setTagModal] = useState({ isVisible: false, tags: [] })
-    const [noteColor, setNoteColor] = useState({ isVisible: false, color: '#ffff' })
+    const [isFavorite, setIsFavorite] = useState(task.favorite)
+    const [description, setDescription] = useState(task.description)
+    const [tagModal, setTagModal] = useState({ isVisible: false, tags: task.tags })
+    const [noteColor, setNoteColor] = useState({ isVisible: false, color: task.color })
 
-    const { setAddNoteModal } = useContext(GlobalContext)
-    const { createTask } = useContext(TaskContext)
+    const { scrollY } = useScroll()
+
+    useMotionValueEvent(scrollY, 'change', (latest) => {
+        console.log(`Você já scrolou ${latest} pixels.`)
+    })
+    const { setUpdateNoteModal } = useContext(GlobalContext)
+    const { updateTask } = useContext(TaskContext)
 
     const removeTag = (item) => {
         const newArr = tagModal.tags.filter((tag) => tag !== item)
@@ -35,14 +40,17 @@ const AddNoteModal = () => {
         }
     }
 
+    const handleAnimate = async () => {
+        await animate('#cardModal', { opacity: 1, scale: 1 })
+        animate('#btn', { opacity: 1, y: 0 }, { duration: 0.2, ease: 'easeInOut' })
+        animate('#star', { opacity: 1, scale: 1 }, { duration: 0.2, ease: 'easeInOut' })
+        animate('#cls-btn', { opacity: 1, scale: 1 }, { duration: 0.2, ease: 'easeInOut' })
+        animate('#tag', { opacity: 1, y: 0 }, { duration: 0.2, ease: 'easeInOut' })
+        setIsMounted(true)
+    }
+
     const tagMap = tagModal.tags.map((item, index) => (
-        <motion.p
-            key={index}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0 }}
-            onClick={() => removeTag(item)}
-        >
+        <motion.p id="tag" key={index} onClick={() => removeTag(item)}>
             {item}
         </motion.p>
     ))
@@ -53,14 +61,6 @@ const AddNoteModal = () => {
         favorite: isFavorite,
         color: noteColor.color,
         tags: tagModal.tags,
-    }
-
-    const handleAnimate = async () => {
-        await animate('#cardModal', { opacity: 1, scale: 1 })
-        animate('#btn', { opacity: 1, y: 0 }, { duration: 0.2, ease: 'easeInOut' })
-        animate('#star', { opacity: 1, scale: 1 }, { duration: 0.2, ease: 'easeInOut' })
-        animate('#cls-btn', { opacity: 1, scale: 1 }, { duration: 0.2, ease: 'easeInOut' })
-        setIsMounted(true)
     }
 
     useEffect(() => {
@@ -82,6 +82,7 @@ const AddNoteModal = () => {
                 <div className="add-nt-title" style={{ backgroundColor: noteColor.color }}>
                     <input
                         placeholder="Título"
+                        defaultValue={task.name}
                         onChange={(e) => setTitle(e.target.value)}
                         style={{ backgroundColor: noteColor.color }}
                     />
@@ -102,10 +103,10 @@ const AddNoteModal = () => {
                     id="btn"
                     initial={{ opacity: 0, y: 30 }}
                     whileTap={{ scale: 0.8 }}
-                    onClick={() => createTask(body)}
-                    whileHover={{ scale: 1.05, backgroundColor: 'ButtonHighlight' }}
+                    onClick={() => updateTask(task.id, body)}
+                    whileHover={{ scale: 1.05, backgroundColor: '#e1e1e1' }}
                 >
-                    Adicionar
+                    Atualizar
                 </motion.button>
 
                 <div className="ext-cfg-note">
@@ -114,7 +115,7 @@ const AddNoteModal = () => {
                         id="btn"
                         initial={{ opacity: 0, y: 30 }}
                         whileTap={{ scale: 0.8 }}
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, backgroundColor: '#e1e1e1' }}
                         style={{ backgroundColor: noteColor.color === '#ffff' ? '#f1f1f1' : 'white' }}
                         onClick={() => openModal('tag')}
                     >
@@ -126,14 +127,14 @@ const AddNoteModal = () => {
                         id="btn"
                         initial={{ opacity: 0, y: 30 }}
                         whileTap={{ scale: 0.9 }}
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, backgroundColor: '#e1e1e1' }}
                         style={{ backgroundColor: noteColor.color === '#ffff' ? '#f1f1f1' : 'white' }}
                         onClick={() => openModal('color')}
                     >
                         Color
                     </motion.div>
 
-                    {tagModal.tags.length > 0 && <div className="tag-map">{tagMap}</div>}
+                    <div className="tag-map">{tagMap}</div>
 
                     <AnimatePresence mode="wait">
                         {noteColor.isVisible && (
@@ -155,7 +156,7 @@ const AddNoteModal = () => {
                     id="cls-btn"
                     initial={{ opacity: 0, scale: 0 }}
                     className="cls-mdl"
-                    onClick={() => setAddNoteModal(false)}
+                    onClick={() => setUpdateNoteModal({ isVisible: false, task })}
                 >
                     <X />
                 </motion.div>
@@ -164,4 +165,4 @@ const AddNoteModal = () => {
     )
 }
 
-export default AddNoteModal
+export default UpdateNoteModal

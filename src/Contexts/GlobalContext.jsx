@@ -7,6 +7,7 @@ export const GlobalContext = React.createContext('')
 export const GlobalStorage = ({ children }) => {
     const [addNoteModal, setAddNoteModal] = useState(false)
     const [colorPicker, setColorPicker] = useState(false)
+    const [updateNoteModal, setUpdateNoteModal] = useState({ isVisible: false, task: null })
 
     const mediumScreen = useMedia('(max-width: 1050px)')
     const smallScreen = useMedia('(max-width: 800px)')
@@ -19,6 +20,8 @@ export const GlobalStorage = ({ children }) => {
                 setAddNoteModal,
                 colorPicker,
                 setColorPicker,
+                updateNoteModal,
+                setUpdateNoteModal,
                 mediumScreen,
                 smallScreen,
                 mobileScreen,

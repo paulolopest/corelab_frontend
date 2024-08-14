@@ -16,8 +16,7 @@ const useAxios = () => {
             setData(res.data)
         } catch (err) {
             setData(null)
-            setError(err.response.data)
-            setLoading(false)
+            setError(err.response?.data || err.message) // Ajustado para lidar com a estrutura do erro            setLoading(false)
         } finally {
             setLoading(false)
         }
@@ -31,8 +30,8 @@ const useAxios = () => {
             await axios.post(url, body, config)
         } catch (err) {
             setData(null)
-            setError(err.response.data)
-            setLoading(false)
+            console.log(err)
+            setError(err.response?.data || err.message) // Ajustado para lidar com a estrutura do erro            setLoading(false)
         } finally {
             setLoading(false)
         }
@@ -46,8 +45,7 @@ const useAxios = () => {
             await axios.put(url, body, config)
         } catch (err) {
             setData(null)
-            setError(err.response.data)
-            setLoading(false)
+            setError(err.response?.data || err.message) // Ajustado para lidar com a estrutura do erro            setLoading(false)
         } finally {
             setLoading(false)
         }
@@ -61,8 +59,7 @@ const useAxios = () => {
             await axios.delete(url, options)
         } catch (err) {
             setData(null)
-            setError(err.response.data)
-            setLoading(false)
+            setError(err.response?.data || err.message) // Ajustado para lidar com a estrutura do erro            setLoading(false)
         } finally {
             setLoading(false)
         }

@@ -1,25 +1,43 @@
 import './FilterModal.scss'
 import { motion } from 'framer-motion'
-import React, { useState } from 'react'
-import { tags } from '../../../Utils/Extra'
+import { colors } from '../../../Utils/Extra'
+import React, { useContext, useState } from 'react'
+import { TaskContext } from '../../../Contexts/TaskContext'
 import { CaretUp, List, TagChevron } from '@phosphor-icons/react'
 
-const FilterModal = ({ order, setOrder, tag, setTag }) => {
-    const [showOrder, setShowOrder] = useState(false)
-    const [showTag, setShowTag] = useState(false)
+const FilterModal = ({ searchWord }) => {
+    const [orderModal, setOrderModal] = useState({ isVisible: false, order: 'asc', reliable: 'Mais recente' })
+    const [colorModal, setColorModal] = useState({ isVisible: false, color: '' })
+
+    const { searchTask, fetchTasks } = useContext(TaskContext)
 
     const handleClickOrder = (e) => {
-        setOrder(e.target.innerText)
-        setShowOrder(false)
+        if (e.target.innerText === 'Mais recentes') {
+            setOrderModal({ isVisible: false, order: 'desc', reliable: 'Mais recente' })
+        } else {
+            setOrderModal({ isVisible: false, order: 'asc', reliable: 'Mais antigo' })
+        }
     }
 
-    const handleClickTag = (e) => {
-        setTag(e.target.innerText)
-        setShowTag(false)
+    const handleClickColor = (e) => {
+        setColorModal({ isVisible: false, color: e.target.innerText.replaceAll('#', '') })
     }
 
-    const tagMap = tags.map((item, index) => (
-        <p onClick={handleClickTag} key={index}>
+    const handleFilter = () => {
+        if (searchWord) {
+            searchTask(searchWord, orderModal.order, 'created_at')
+            console.log('1')
+        } else if (colorModal.color) {
+            searchTask(colorModal.color, orderModal.order, 'created_at')
+            console.log('2')
+        } else {
+            fetchTasks(30, orderModal.order, 'created_at')
+            console.log('3')
+        }
+    }
+
+    const colorMap = colors.map((item, index) => (
+        <p style={{ backgroundColor: item }} onClick={handleClickColor} key={index}>
             {item}
         </p>
     ))
@@ -39,12 +57,21 @@ const FilterModal = ({ order, setOrder, tag, setTag }) => {
                 </div>
 
                 <div className="flt-odr-tlt-btn-ctr">
-                    <div className="flt-odr-tlt-btn" onClick={() => setShowOrder(!showOrder)}>
-                        <p>{order}</p>
-                        <CaretUp style={{ rotate: showOrder && '180deg' }} />
+                    <div
+                        className="flt-odr-tlt-btn"
+                        onClick={() =>
+                            setOrderModal({
+                                isVisible: !orderModal.isVisible,
+                                order: orderModal.order,
+                                reliable: orderModal.reliable,
+                            })
+                        }
+                    >
+                        <p>{orderModal.reliable}</p>
+                        <CaretUp style={{ rotate: orderModal.isVisible && '180deg' }} />
                     </div>
 
-                    {showOrder && (
+                    {orderModal.isVisible && (
                         <div className="show-order">
                             <p onClick={handleClickOrder}>Mais recentes</p>
                             <p onClick={handleClickOrder}>Mais antigos</p>
@@ -55,27 +82,38 @@ const FilterModal = ({ order, setOrder, tag, setTag }) => {
             <div className="flt-order">
                 <div className="flt-odr-title">
                     <TagChevron />
-                    <p>Tag:</p>
+                    <p>Cor:</p>
                 </div>
 
                 <div className="flt-odr-tlt-btn-ctr">
-                    <div className="flt-odr-tlt-btn" onClick={() => setShowTag(!showTag)}>
-                        {tag ? (
+                    <div
+                        className="flt-odr-tlt-btn"
+                        onClick={() =>
+                            setColorModal({ isVisible: !colorModal.isVisible, color: colorModal.color })
+                        }
+                    >
+                        {colorModal.color ? (
                             <>
-                                <p>{tag}</p>
-                                <CaretUp style={{ rotate: showTag && '180deg' }} />
+                                <p style={{ backgroundColor: `#${colorModal.color} || 'white'` }}>
+                                    {colorModal.color}
+                                </p>
+                                <CaretUp style={{ rotate: colorModal.isVisible && '180deg' }} />
                             </>
                         ) : (
                             <>
                                 <p>Selecionar:</p>
-                                <CaretUp style={{ rotate: showTag && '180deg' }} />
+                                <CaretUp style={{ rotate: colorModal.isVisible && '180deg' }} />
                             </>
                         )}
                     </div>
 
-                    {showTag && <div className="show-tag">{tagMap}</div>}
+                    {colorModal.isVisible && <div className="show-tag">{colorMap}</div>}
                 </div>
             </div>
+
+            <button className="flt-mdl-btn-cfm" onClick={handleFilter}>
+                Confirmar
+            </button>
         </motion.div>
     )
 }
