@@ -1,9 +1,9 @@
 import './NoteCard.scss'
 import React, { useContext, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { PaintBucket, PencilSimpleLine, Star, Warning, X } from '@phosphor-icons/react'
 import { TaskContext } from '../../Contexts/TaskContext'
 import { GlobalContext } from '../../Contexts/GlobalContext'
+import { PaintBucket, PencilSimpleLine, Star, Warning, X } from '@phosphor-icons/react'
 
 const NoteCard = ({ task }) => {
     const [showDelete, setShowDelete] = useState(false)
@@ -41,7 +41,8 @@ const NoteCard = ({ task }) => {
                     <div onClick={() => setUpdateNoteModal({ isVisible: true, task })}>
                         <PencilSimpleLine />
                     </div>
-                    <div>
+
+                    <div onClick={() => setUpdateNoteModal({ isVisible: true, task })}>
                         <PaintBucket />
                     </div>
                 </div>
