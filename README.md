@@ -30,7 +30,6 @@ Tanto o frontend quanto o back se encontram hospedados na vercel e você pode te
 Certifique-se de ter instalado:
 
 - [Node.js](https://nodejs.org/)
-- [Docker](https://www.docker.com/)
 - [Git](https://git-scm.com/)
 
 ### Passos para rodar
